@@ -1,0 +1,68 @@
+:root {
+  /* Surfaces */
+  --bg: #140b1f;            /* main background: near-black plum */
+  --bg-deep: #0c0614;       /* darkest sections, phone frame edges */
+  --surface: #1e1230;       /* cards, panels */
+  --surface-2: #2a1a40;     /* raised / hover surfaces */
+  --border: rgba(217, 200, 245, 0.12);
+
+  /* Brand */
+  --accent: #a678f0;        /* violet: main accent */
+  --accent-deep: #7a4bd1;
+  --accent-light: #c4a2f7;
+  --accent-rgb: 166, 120, 240; /* for rgba(var(--accent-rgb), 0.2) */
+  --gold: #e2c27a;          /* money / luxury touches */
+  --rec: #ff3b4e;           /* REC dot, camera UI */
+
+  /* Text */
+  --text: #f3ecfb;
+  --subtext: #cbb9e6;
+  --muted: #8f7bb0;
+
+  /* Type */
+  --font-sans: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* Shape */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 28px;
+
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  background: var(--bg-deep);
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--bg);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 20px 20px;
+  color: var(--text);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+img,
+video {
+  max-width: 100%;
+}
+
+/* Phone-style screens: use dvh so mobile browser bars don't cut things off */
+.screen {
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
