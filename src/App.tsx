@@ -1,32 +1,33 @@
-import Hero from './components/sections/Hero'
-// import Intro from './components/sections/Intro'
-import Calendar from './components/sections/Calendar'
-import HappyBirthday from './components/sections/HappyBirthday'
-import WhoSheIs from './components/sections/WhoSheIs'
-import WhatSheLoves from './components/sections/WhatSheLoves'
-import SoundsOfHer from './components/sections/SoundsOfHer'
-import ScatteredGallery from './components/sections/ScatteredGallery'
-import NineteenReasons from './components/sections/NineteenReasons'
-import CreatorNote from './components/sections/CreatorNote'
-import SurpriseEnvelope from './components/sections/Final'
-function App() {
+import { useState } from "react";
+import { AnimatePresence } from "framer-motion";
+import PhoneShell from "./components/layout/PhoneShell";
+import LockScreen from "./components/screens/LockScreen";
 
+type Screen = "lock" | "camera";
+
+function App() {
+  const [screen, setScreen] = useState<Screen>("lock");
+
+  const handleUnlock = () => {
+    setScreen("camera");
+    // TODO: start the background music here (must happen inside the swipe/tap).
+  };
 
   return (
-    <>
-    <Hero />  
-    {/* <Intro /> */}
-    <Calendar />
-    {/* <HappyBirthday/> */}
-    <WhoSheIs/>
-    <WhatSheLoves/>
-    {/* <SoundsOfHer/> */}
-    <ScatteredGallery/>
-    <NineteenReasons/>
-    <CreatorNote/>
-    <SurpriseEnvelope/>
-    </>
-  )
+    <PhoneShell>
+      {/* Sits underneath so it's revealed as the lock screen slides up */}
+      <div
+        className="screen"
+        style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", color: "var(--subtext)" }}
+      >
+        Viewfinder goes here
+      </div>
+
+      <AnimatePresence>
+        {screen === "lock" && <LockScreen key="lock" onUnlock={handleUnlock} />}
+      </AnimatePresence>
+    </PhoneShell>
+  );
 }
 
-export default App
+export default App;
