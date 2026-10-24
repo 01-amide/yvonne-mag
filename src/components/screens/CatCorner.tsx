@@ -167,77 +167,7 @@ export default function CatCorner({ onNext }: Props) {
         )}
 
 
-{/* The cats you can pet */}
-{content.cats.map((c) => (
-  <div
-    key={c.name}
-    onClick={(e) => {
-      e.stopPropagation();
-      setPets((n) => n + 1);
-    }}
-    style={{
-      position: "absolute",
-      left: `${c.x}%`,
-      top: `${c.y}%`,
-      width: CAT_BOX,
-      height: CAT_BOX,
-      boxSizing: "border-box",
-      borderRadius: "50%",
-      overflow: "hidden",
-      marginLeft: -CAT_BOX / 2,
-      marginTop: -CAT_BOX / 2,
-      cursor: "pointer",
-      zIndex: 10,
-      background: "var(--surface)",
-      border: "2px solid rgba(var(--accent-rgb), 0.5)",
-    }}
-  >
-    {c.video ? (
-      <video
-        src={c.video}
-        autoPlay
-        loop
-        muted
-        playsInline
-        preload="auto"
-        draggable={false}
-        style={{
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-          display: "block",
-          pointerEvents: "none",
-        }}
-      />
-    ) : c.photo ? (
-      <img
-        src={c.photo}
-        alt={c.name}
-        draggable={false}
-        style={{
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-          display: "block",
-          pointerEvents: "none",
-        }}
-      />
-    ) : (
-      <div
-        style={{
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontSize: 32,
-        }}
-      >
-        {c.emoji}
-      </div>
-    )}
-  </div>
-))}
+{/* The cats you can pet */} {content.cats.map((c) => ( <CatPal key={c.name} name={c.name} emoji={c.emoji} photo={c.photo} video={c.video} pitch={c.pitch} size={CAT_BOX / 1.3} framed style={{ left: `${c.x}%`, top: `${c.y}%`, width: CAT_BOX, height: CAT_BOX, marginLeft: -CAT_BOX / 2, marginTop: -CAT_BOX / 2, cursor: "pointer", }} onPet={() => setPets((n) => n + 1)} /> ))}
 
         {/* The chaser: runs to wherever she taps */}
         <motion.div

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, useTransform, type PanInfo } from "framer-motion";
 import type { Story } from "../../content";
+import { posterOf, warmItem } from "../../lib/media";
 
 type Props = {
   story: Story;
@@ -42,6 +43,11 @@ export default function StoryViewer({ story, hasPrevStory, onClose, onNextStory,
   const item = story.items[idx];
   const isVideo = item.type === "video" && !!item.src;
   const isImage = item.type === "image" && !!item.src;
+
+  // Start downloading the next item while this one plays
+  useEffect(() => {
+    warmItem(story.items[idx + 1]);
+  }, [story, idx]);
 
   const next = useCallback(() => {
     if (idx < story.items.length - 1) {
@@ -158,6 +164,7 @@ export default function StoryViewer({ story, hasPrevStory, onClose, onNextStory,
           key={`${story.id}-${idx}`}
           ref={videoRef}
           src={item.src}
+          poster={posterOf(item.src)}
           autoPlay
           muted
           playsInline

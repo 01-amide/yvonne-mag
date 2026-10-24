@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useDragControls, useMotionValue, useTransform, type PanInfo } from "framer-motion";
 import { content, type Post } from "../../content";
+import { posterOf } from "../../lib/media";
 
 type Props = { post: Post; onClose: () => void };
 
@@ -102,7 +103,7 @@ export default function PostViewer({ post, onClose }: Props) {
         {/* Media (double-tap to like) */}
         <div onClick={onMediaTap} style={{ position: "relative", width: "100%", aspectRatio: "1 / 1", background: "var(--surface)", overflow: "hidden" }}>
           {post.src && post.type === "video" && (
-            <video src={post.src} autoPlay muted loop playsInline style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            <video src={post.src} poster={posterOf(post.src)} autoPlay muted loop playsInline style={{ width: "100%", height: "100%", objectFit: "cover" }} />
           )}
           {post.src && post.type === "image" && (
             <img src={post.src} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />

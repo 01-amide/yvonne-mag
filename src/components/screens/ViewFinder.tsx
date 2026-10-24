@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { content } from "../../content";
+import { posterOf } from "../../lib/media";
 
 type Props = { onNext: () => void };
 
@@ -68,7 +69,7 @@ export default function Viewfinder({ onNext }: Props) {
     >
       {/* Live "feed" */}
       {media && mediaType === "video" && (
-        <video src={media} autoPlay muted loop playsInline
+        <video src={media} poster={posterOf(media)} autoPlay muted loop playsInline
           style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
       )}
       {media && mediaType === "image" && (

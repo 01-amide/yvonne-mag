@@ -2,6 +2,7 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { content, type Post } from "../../content";
 import PostViewer from "./PostViewer";
+import { posterOf } from "../../lib/media";
 import { useCountUp } from "../../hooks/useCountUp";
 
 type Props = { onNext: () => void };
@@ -122,7 +123,7 @@ export default function ProfileScreen({ onNext }: Props) {
                 <img src={post.src} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               )}
               {post.src && post.type === "video" && (
-                <video src={post.src} muted playsInline preload="metadata" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                <img src={posterOf(post.src)} alt="" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               )}
               {!post.src && (
                 <div style={{
