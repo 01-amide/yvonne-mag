@@ -29,6 +29,7 @@ export type CatInfo = {
   name: string;
   emoji: string; // used when there's no photo
   photo: string; // "/mochi.jpg" in /public, "" = emoji
+  video?: string;
   pitch: number; // voice: 0.7 deep, 1 normal, 1.3 squeaky
   x: number; // position in the play area, % from left
   y: number; // % from top
@@ -65,10 +66,11 @@ export const content = {
  
   // Cat Corner screen
   cats: [
-    { name: "Mochi", emoji: "🐱", photo: "", pitch: 1.0, x: 22, y: 22 },
-    { name: "Luna", emoji: "🐈‍⬛", photo: "", pitch: 0.8, x: 70, y: 18 },
-    { name: "Biscuit", emoji: "😺", photo: "", pitch: 1.25, x: 74, y: 52 },
-    { name: "Cleo", emoji: "🐈", photo: "", pitch: 0.95, x: 20, y: 54 },
+    { name: "Mochi", emoji: "🐱", photo: "download.jfif", video:"scuba.mp4", pitch: 1.0, x: 22, y: 22 },
+    { name: "Luna", emoji: "🐈‍⬛", photo: "chad.jpg", video:"", pitch: 0.8, x: 70, y: 18 },
+    { name: "Biscuit", emoji: "😺", photo: "", video:"clapcat.mp4", pitch: 1.25, x: 74, y: 52 },
+    { name: "Cleo", emoji: "🐈", photo: "moneycat.jpg", pitch: 0.95, x: 20, y: 70 },
+    { name: "Cleo", emoji: "🐈", photo: "thinkingcat.jpg", pitch: 0.95, x: 42, y: 45 },
   ] as CatInfo[],
  
   // Birthday Bank screen
@@ -83,6 +85,9 @@ export const content = {
       { title: "Cat treats", note: "auto-pay", amount: "−₦500", kind: "out" },
     ] as BankTx[],
   },
+
+    // Her birthday (used by Calendar). month is 0-11: 0 = January ... 10 = November
+  birthday: { year: 2026, month: 9, day: 25 },
     // Profile screen
   profile: {
     handle: "Her.",
@@ -100,13 +105,13 @@ export const content = {
       comments: [{ user: "me", text: "wish i could put stickers on here (im too lazy to design that)" }] },
     { id: "p4", type: "image", src: "orangestill.JPG", emoji: "💸", caption: "eliezer ran out of cool captions😔", likes: 876,
       comments: [] },
-    { id: "p5", type: "video", src: "redshirt.mov", emoji: "🎀", caption: "caption goes here", likes: 2210,
+    { id: "p5", type: "video", src: "redshirt.mov", emoji: "🎀", caption: "", likes: 2210,
       comments: [{ user: "jix", text: "The one person she's follwing is me btw incase you that wasnt obvious" }] },
     { id: "p6", type: "video", src: "bluetrad.mov", emoji: "🤍", caption: "caption goes here", likes: 1530,
-      comments: [{user: "jix", text: "fawkk come i go like make we dey together fytb"}, {user: "rando", text: "come let me spoil you bbg"}] },
-    { id: "p7", type: "video", src: "bluedress.mov", emoji: "🌸", caption: "caption goes here", likes: 990,
+      comments: [{user: "jix", text: "fawkk come i go like make we dey together fytb"}, {user: "rando", text: "come let me spoil you bbg"}, {user: "jix", text: "eww bruh"}] },
+    { id: "p7", type: "video", src: "bluedress.mov", emoji: "🌸", caption: "", likes: 990,
       comments: [] },
-    { id: "p8", type: "video", src: "braids.mov", emoji: "🎂", caption: "caption goes here", likes: 4100,
+    { id: "p8", type: "video", src: "braids.mov", emoji: "🎂", caption: "", likes: 4100,
       comments: [{ user: "me", text: "comment goes here" }] },
   ] as Post[],
    stories: [

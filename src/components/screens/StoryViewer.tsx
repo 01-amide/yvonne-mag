@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useTransform, type PanInfo } from "framer-motion";
 import type { Story } from "../../content";
 
 type Props = {
@@ -11,6 +11,9 @@ type Props = {
 };
 
 const IMAGE_DURATION = 5000; // ms per photo
+const CLOSE_DISTANCE = 110; // px dragged down to close
+const CLOSE_VELOCITY = 600; // px/s flick down to close
+let hintShown = false; // show "swipe down to close" once per visit
 const mono: React.CSSProperties = { fontFamily: "var(--font-mono)", letterSpacing: "0.06em" };
 
 export default function StoryViewer({ story, hasPrevStory, onClose, onNextStory, onPrevStory }: Props) {
@@ -22,6 +25,18 @@ export default function StoryViewer({ story, hasPrevStory, onClose, onNextStory,
   const videoRef = useRef<HTMLVideoElement>(null);
   const pausedRef = useRef(false);
   const pressAt = useRef(0);
+  const dragEndAt = useRef(0);
+  const [showHint] = useState(() => {
+    const show = !hintShown;
+    hintShown = true;
+    return show;
+  });
+
+  // Drag-down-to-close: the card follows the finger, shrinks and rounds off, the backdrop fades
+  const y = useMotionValue(0);
+  const scale = useTransform(y, [0, 320], [1, 0.8]);
+  const radius = useTransform(y, [0, 120], [0, 32]);
+  const backdrop = useTransform(y, [0, 300], ["rgba(0,0,0,1)", "rgba(0,0,0,0)"]);
   const heartId = useRef(0);
 
   const item = story.items[idx];
@@ -93,9 +108,23 @@ export default function StoryViewer({ story, hasPrevStory, onClose, onNextStory,
 
   const zone = (dir: "prev" | "next") => () => {
     if (Date.now() - pressAt.current > 250) return; // it was a hold, not a tap
+    if (Date.now() - dragEndAt.current < 400) return; // it was the end of a drag
     if (dir === "prev") prev();
     else next();
   };
+
+  const handleDragEnd = (_: unknown, info: PanInfo) => {
+    dragEndAt.current = Date.now();
+    setPaused(false);
+    if (info.offset.y > CLOSE_DISTANCE || info.velocity.y > CLOSE_VELOCITY) onClose();
+  };
+
+  // Escape closes (desktop)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
 
   const sendHeart = () => {
     const id = heartId.current++;
@@ -104,13 +133,23 @@ export default function StoryViewer({ story, hasPrevStory, onClose, onNextStory,
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.92 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.95 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
       transition={{ duration: 0.25 }}
+      style={{ position: "absolute", inset: 0, zIndex: 40, background: backdrop }}
+    >
+    <motion.div
+      drag="y"
+      dragConstraints={{ top: 0, bottom: 0 }}
+      dragElastic={{ top: 0, bottom: 0.9 }}
+      dragSnapToOrigin
+      onDragStart={() => setPaused(true)}
+      onDragEnd={handleDragEnd}
       style={{
-        position: "absolute", inset: 0, zIndex: 40, background: "#000", color: "#fff",
-        fontFamily: "var(--font-sans)", overflow: "hidden", userSelect: "none", touchAction: "manipulation",
+        y, scale, borderRadius: radius,
+        position: "absolute", inset: 0, background: "#000", color: "#fff",
+        fontFamily: "var(--font-sans)", overflow: "hidden", userSelect: "none", touchAction: "none",
       }}
     >
       {/* Media */}
@@ -192,7 +231,10 @@ export default function StoryViewer({ story, hasPrevStory, onClose, onNextStory,
         <button
           onClick={onClose}
           aria-label="Close"
-          style={{ marginLeft: "auto", background: "none", border: "none", color: "#fff", fontSize: 22, cursor: "pointer", padding: 6 }}
+          style={{
+            marginLeft: "auto", width: 44, height: 44, display: "grid", placeItems: "center", marginRight: -8,
+            background: "rgba(0,0,0,0.25)", border: "none", borderRadius: "50%", color: "#fff", fontSize: 20, cursor: "pointer",
+          }}
         >
           ✕
         </button>
@@ -248,6 +290,27 @@ export default function StoryViewer({ story, hasPrevStory, onClose, onNextStory,
           🤍
         </motion.button>
       </div>
+
+      {/* One-time hint */}
+      {showHint && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0, 1, 1, 0] }}
+          transition={{ delay: 0.7, duration: 3.4, times: [0, 0.12, 0.8, 1] }}
+          style={{
+            position: "absolute", left: 0, right: 0, bottom: "calc(env(safe-area-inset-bottom, 0px) + 34px)",
+            display: "flex", justifyContent: "center", pointerEvents: "none", zIndex: 6,
+          }}
+        >
+          <span style={{
+            fontFamily: "var(--font-mono)", fontSize: 11, letterSpacing: "0.06em", padding: "7px 14px", borderRadius: 999,
+            background: "rgba(20,11,31,0.7)", border: "1px solid var(--border)",
+          }}>
+            swipe down to close ⌄
+          </span>
+        </motion.div>
+      )}
+    </motion.div>
     </motion.div>
   );
 }

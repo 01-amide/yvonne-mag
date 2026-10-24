@@ -8,8 +8,10 @@ import ProfileScreen from "./components/screens/ProfileScreen";
 import BankScreen from "./components/screens/BankScreen";
 import CatCorner from "./components/screens/CatCorner";
 import FinalScreen from "./components/screens/FinalScreen";
+import LegacyScreen from "./components/layout/LegacyScreen";
+import Calendar from "./components/sections/Calendar";
 
-type Screen = "lock" | "camera" | "stories" | "profile" | "bank" | "cats" | "message";
+type Screen = "lock" | "camera" | "stories" | "profile" | "calendar" | "bank" | "cats" | "message";
 
 function App() {
   const [screen, setScreen] = useState<Screen>("lock");
@@ -42,7 +44,15 @@ function App() {
       </AnimatePresence>
 
       <AnimatePresence>
-        {screen === "camera" && <Viewfinder key="camera" onNext={() => setScreen("stories")} />}
+        {screen === "calendar" && (
+          <LegacyScreen key="calendar" onNext={() => setScreen("stories")}>
+            <Calendar />
+          </LegacyScreen>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {screen === "camera" && <Viewfinder key="camera" onNext={() => setScreen("calendar")} />}
       </AnimatePresence>
 
       <AnimatePresence>

@@ -1,8 +1,11 @@
-import { useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion, useDragControls, useMotionValue, useTransform, type PanInfo } from "framer-motion";
 import { content, type Post } from "../../content";
 
 type Props = { post: Post; onClose: () => void };
+
+const CLOSE_DISTANCE = 110; // px dragged down to close
+const CLOSE_VELOCITY = 600; // px/s flick down to close
 
 const fmt = (n: number) => new Intl.NumberFormat("en", { notation: "compact", maximumFractionDigits: 1 }).format(n);
 
@@ -10,6 +13,22 @@ export default function PostViewer({ post, onClose }: Props) {
   const [liked, setLiked] = useState(false);
   const [burst, setBurst] = useState(0);
   const lastTap = useRef(0);
+
+  // Drag-down-to-close from the handle/header: the sheet follows the finger and the backdrop fades
+  const controls = useDragControls();
+  const y = useMotionValue(0);
+  const backdrop = useTransform(y, [0, 420], ["rgba(0,0,0,0.65)", "rgba(0,0,0,0)"]);
+
+  const handleDragEnd = (_: unknown, info: PanInfo) => {
+    if (info.offset.y > CLOSE_DISTANCE || info.velocity.y > CLOSE_VELOCITY) onClose();
+  };
+
+  // Escape closes (desktop)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
   const { handle, avatar } = content.profile;
 
   const onMediaTap = () => {
@@ -31,7 +50,7 @@ export default function PostViewer({ post, onClose }: Props) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       onClick={onClose}
-      style={{ position: "absolute", inset: 0, zIndex: 40, background: "rgba(0,0,0,0.65)" }}
+      style={{ position: "absolute", inset: 0, zIndex: 40, background: backdrop }}
     >
       <motion.div
         onClick={(e) => e.stopPropagation()}
@@ -39,26 +58,45 @@ export default function PostViewer({ post, onClose }: Props) {
         animate={{ y: 0 }}
         exit={{ y: "100%" }}
         transition={{ type: "spring", stiffness: 260, damping: 30 }}
+        drag="y"
+        dragListener={false}
+        dragControls={controls}
+        dragConstraints={{ top: 0, bottom: 0 }}
+        dragElastic={{ top: 0, bottom: 0.7 }}
+        dragSnapToOrigin
+        onDragEnd={handleDragEnd}
         style={{
+          y,
           position: "absolute", left: 0, right: 0, bottom: 0, height: "92%",
           background: "var(--bg)", borderRadius: "24px 24px 0 0", overflowY: "auto",
           border: "1px solid var(--border)", borderBottom: "none", color: "var(--text)", fontFamily: "var(--font-sans)",
         }}
       >
-        {/* Grab handle + header */}
-        <div style={{ display: "flex", justifyContent: "center", padding: "10px 0 4px" }}>
-          <div style={{ width: 40, height: 4, borderRadius: 2, background: "rgba(255,255,255,0.25)" }} />
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 14px" }}>
-          <div style={{
-            width: 32, height: 32, borderRadius: "50%", display: "grid", placeItems: "center", fontWeight: 700, fontSize: 14,
-            background: avatar ? `url(${avatar}) center/cover` : "linear-gradient(135deg, var(--accent), var(--accent-deep))",
-          }}>
-            {!avatar && content.name.charAt(0)}
+        {/* Grab handle + header: drag down from here to close */}
+        <div onPointerDown={(e) => controls.start(e)} style={{ touchAction: "none", cursor: "grab" }}>
+          <div style={{ display: "flex", justifyContent: "center", padding: "12px 0 6px" }}>
+            <div style={{ width: 44, height: 5, borderRadius: 3, background: "rgba(255,255,255,0.3)" }} />
           </div>
-          <span style={{ fontSize: 14, fontWeight: 700 }}>{handle}</span>
-          <button onClick={onClose} aria-label="Close"
-            style={{ marginLeft: "auto", background: "none", border: "none", color: "#fff", fontSize: 20, cursor: "pointer" }}>✕</button>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "6px 14px 10px" }}>
+            <div style={{
+              width: 32, height: 32, borderRadius: "50%", display: "grid", placeItems: "center", fontWeight: 700, fontSize: 14,
+              background: avatar ? `url(${avatar}) center/cover` : "linear-gradient(135deg, var(--accent), var(--accent-deep))",
+            }}>
+              {!avatar && content.name.charAt(0)}
+            </div>
+            <span style={{ fontSize: 14, fontWeight: 700 }}>{handle}</span>
+            <button
+              onClick={onClose}
+              onPointerDown={(e) => e.stopPropagation()}
+              aria-label="Close"
+              style={{
+                marginLeft: "auto", width: 44, height: 44, display: "grid", placeItems: "center", marginRight: -8,
+                background: "rgba(255,255,255,0.08)", border: "none", borderRadius: "50%", color: "#fff", fontSize: 18, cursor: "pointer",
+              }}
+            >
+              ✕
+            </button>
+          </div>
         </div>
 
         {/* Media (double-tap to like) */}

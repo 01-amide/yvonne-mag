@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Section from "../layout/Section";
+import { content } from "../../content";
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-const BIRTHDAY = 25;
-const START_OFFSET = 3; // October 2026 starts on Thursday (index 3)
-const TOTAL_DAYS = 31;
+const { year: YEAR, month: MONTH, day: BIRTHDAY } = content.birthday;
+const MONTH_NAME = new Date(YEAR, MONTH, 1).toLocaleString("en", { month: "long" });
+const START_OFFSET = (new Date(YEAR, MONTH, 1).getDay() + 6) % 7; // weeks start on Monday
+const TOTAL_DAYS = new Date(YEAR, MONTH + 1, 0).getDate();
 
 export default function Calendar() {
   const [revealed, setRevealed] = useState(false);
@@ -102,7 +104,7 @@ export default function Calendar() {
               letterSpacing: "-0.02em",
             }}
           >
-            October
+            {MONTH_NAME}
           </h2>
           <div
             style={{
@@ -122,7 +124,7 @@ export default function Calendar() {
                 color: "rgba(255,255,255,0.3)",
               }}
             >
-              2026
+              {YEAR}
             </span>
             <div style={{ height: "1px", width: "48px", background: "rgba(var(--accent-rgb), 0.4)" }} />
           </div>
@@ -282,7 +284,7 @@ export default function Calendar() {
               paddingInline: 8,
             }}
           >
-            October 25th — It's her day 🎀
+            {MONTH_NAME} {BIRTHDAY} — It's her day 🎀
           </p>
           <div style={{ height: "1px", flex: 1, background: "rgba(var(--accent-rgb), 0.2)" }} />
         </motion.div>
