@@ -158,7 +158,7 @@ export const content = {
         { type: "image", src: "/old5.webp", caption: "" },
         { type: "video", src: "/old8.mp4", caption: "" },
         { type: "image", src: "/old7.webp", caption: "" },
-        { type: "video", src: "/old9.mp4", caption: "omds i literally forgot you had this markey piercing sef🤣" },
+        { type: "video", src: "/old9.mp4", caption: "omds i literally forgot you had this piercing sef🤣" },
         { type: "image", src: "/old6.webp", caption: "cute cute" },
       ],
     },
