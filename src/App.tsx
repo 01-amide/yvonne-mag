@@ -4,8 +4,12 @@ import PhoneShell from "./components/layout/PhoneShell";
 import LockScreen from "./components/screens/LockScreen";
 import Viewfinder from "./components/screens/ViewFinder";
 import StoriesScreen from "./components/screens/StoriesScreen";
+import ProfileScreen from "./components/screens/ProfileScreen";
+import BankScreen from "./components/screens/BankScreen";
+import CatCorner from "./components/screens/CatCorner";
+import FinalScreen from "./components/screens/FinalScreen";
 
-type Screen = "lock" | "camera" | "stories" | "profile";
+type Screen = "lock" | "camera" | "stories" | "profile" | "bank" | "cats" | "message";
 
 function App() {
   const [screen, setScreen] = useState<Screen>("lock");
@@ -17,13 +21,21 @@ function App() {
 
   return (
     <PhoneShell>
-      {/* Placeholder for the next screen, sits underneath everything */}
-      <div
-        className="screen"
-        style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", color: "var(--subtext)" }}
-      >
-        Profile grid goes here
-      </div>
+      <AnimatePresence>
+        {screen === "message" && <FinalScreen key="message" onRestart={() => setScreen("lock")} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {screen === "cats" && <CatCorner key="cats" onNext={() => setScreen("message")} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {screen === "bank" && <BankScreen key="bank" onNext={() => setScreen("cats")} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {screen === "profile" && <ProfileScreen key="profile" onNext={() => setScreen("bank")} />}
+      </AnimatePresence>
 
       <AnimatePresence>
         {screen === "stories" && <StoriesScreen key="stories" onNext={() => setScreen("profile")} />}
