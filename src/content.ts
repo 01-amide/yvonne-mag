@@ -88,7 +88,7 @@ export const content = {
     { name: "Luna", emoji: "🐈‍⬛", photo: "/chad.webp", video:"", pitch: 0.8, x: 70, y: 18 },
     { name: "Biscuit", emoji: "😺", photo: "", video:"/clapcat.mp4", pitch: 1.25, x: 74, y: 52 },
     { name: "Cleo", emoji: "🐈", photo: "/moneycat.webp", pitch: 0.95, x: 20, y: 70 },
-    { name: "Cleo", emoji: "🐈", photo: "/thinkingcat.webp", pitch: 0.95, x: 42, y: 45 },
+    { name: "jeff", emoji: "🐈", photo: "/thinkingcat.webp", pitch: 0.95, x: 42, y: 45 },
   ] as CatInfo[],
  
   // Birthday Bank screen
